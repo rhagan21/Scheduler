@@ -9,6 +9,7 @@
 #include "../libpriqueue/libpriqueue.h"
 
 
+
 /**
   Stores information making up a job to be scheduled including any statistics.
 
@@ -22,6 +23,26 @@ typedef struct _job_t
     int priority;
 } job_t;
 
+/* schedulers:
+ * fcfs: first job to arrive is first to run
+ * sjf: run the job with the smallest running time non preemptively
+ * psjf: run the job with the shortest remaining time even if this preempts a currently running job, aka srt
+ * pri: run the most important job first, non preemptively
+ * ppri: run the most important job available even if it preempts a currently running job
+ * rr: run each job for a given time quantum
+ */
+int compare_fcfs(const void * a, const void * b){
+    // use for fcfs and rr
+    return 0;
+}
+int compare_sjf(const void * a, const void * b){
+    // use for sjf and psjf
+    return ((job_t*)a->running_time-(job_t*)b->running_time);
+}
+int compare_pri(const void * a, const void * b){
+    // use for pri and ppri
+    return ((job_t*)a->priority-(job_t*)b->priority);
+}
 
 /**
   Initalizes the scheduler.
@@ -38,7 +59,23 @@ typedef struct _job_t
 void scheduler_start_up(int cores, scheme_t scheme)
 {
     struct priqueue_t q;
-    priqueue_init(q, (0, cores);
+    //priqueue_init(q, (0, cores);
+    
+    if(scheme==FCFS){
+        priqueue_init(q, &compare_fcfs);
+    } else if (scheme==SJF){
+        priqueue_init(q, &compare_sjf);
+    } else if (scheme==PSJF){
+        priqueue_init(q, &compare_psjf);
+    } else if (scheme==PRI){
+        priqueue_init(q, &compare_pri);
+    } else if (scheme==PPRI){
+        priqueue_init(q, &compare_pri);
+    } else if (scheme==RR){
+        priqueue_init(q, &compare_fcfs);
+    }
+    
+    // TODO: Init cores 
 }
 
 
